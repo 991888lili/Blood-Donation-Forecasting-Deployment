@@ -1,0 +1,49 @@
+{
+  "description": "Sample data for blood donation prediction system",
+  "usage": "Upload CSV with same format to get 7-day predictions",
+  "required_columns": [
+    "date",
+    "blood_o",
+    "donations_new",
+    "donations_regular",
+    "daily",
+    "max_temperature",
+    "is_holiday"
+  ],
+  "column_descriptions": {
+    "date": "Date in YYYY-MM-DD format",
+    "blood_o": "O-type blood donations (daily count)",
+    "donations_new": "New donor donations (daily count)",
+    "donations_regular": "Regular donor donations (daily count)",
+    "daily": "Total daily blood donations",
+    "max_temperature": "Maximum temperature (Celsius)",
+    "is_holiday": "Holiday indicator (0 or 1)"
+  },
+  "data_requirements": {
+    "minimum_days": 14,
+    "recommended_days": 14,
+    "date_format": "YYYY-MM-DD",
+    "numeric_columns": [
+      "blood_o",
+      "donations_new",
+      "donations_regular",
+      "daily",
+      "max_temperature"
+    ],
+    "binary_columns": [
+      "is_holiday"
+    ]
+  },
+  "sample_stats": {
+    "date_range": "2024-12-18 00:00:00 to 2024-12-31 00:00:00",
+    "total_days": 14,
+    "daily_mean": 568.9,
+    "daily_range": "254 to 997"
+  },
+  "notes": [
+    "Use most recent 14 days of historical data for best predictions",
+    "Ensure all numeric values are positive",
+    "Holiday column: 1 = holiday, 0 = regular day",
+    "Temperature should be in Celsius (15-40\u00b0C range expected)"
+  ]
+}

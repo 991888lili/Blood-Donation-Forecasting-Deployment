@@ -1,0 +1,1 @@
+{"creation_date": "2025-08-15T11:00:50.488330", "model_performance": {"ensemble_test_mae": 25.18, "ensemble_test_r2": 0.9803}, "meta_learner_weights": {"xgb_weight": 0.3186472952365875, "lstm_weight": 0.7183445692062378}}
