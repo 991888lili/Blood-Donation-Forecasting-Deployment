@@ -10,6 +10,28 @@ from datetime import datetime, timedelta
 from tensorflow.keras.models import load_model
 import json
 
+
+def safe_date_operation(date_obj, operation='add', days=0):
+    """Safely perform date operations to avoid pandas compatibility issues"""
+    # Always convert to string then back to datetime for maximum compatibility
+    if hasattr(date_obj, 'strftime'):
+        date_str = date_obj.strftime('%Y-%m-%d')
+    elif hasattr(date_obj, 'date'):
+        date_str = date_obj.date().strftime('%Y-%m-%d')
+    else:
+        date_str = str(date_obj)[:10]  # Take first 10 chars (YYYY-MM-DD)
+    
+    # Convert to Python datetime
+    date_obj = datetime.strptime(date_str, '%Y-%m-%d')
+    
+    # Perform the operation
+    if operation == 'add':
+        return date_obj + timedelta(days=days)
+    elif operation == 'subtract':
+        return date_obj - timedelta(days=days)
+    else:
+        return date_obj
+
 class BloodDonationPredictor:
     def __init__(self, model_dir='models/'):
         """Initialize predictor with trained models"""
@@ -70,7 +92,9 @@ class BloodDonationPredictor:
         self.daily_variation = daily_changes.std() * self.daily_variation_factor
         
         # Calculate weekend effects
-        data['dayofweek'] = data['date'].dt.dayofweek
+        # Safe dayofweek calculation
+        data['date'] = pd.to_datetime(data['date'])
+        data['dayofweek'] = [d.weekday() for d in data['date']]
         weekdays = data[data['dayofweek'] < 5]
         weekends = data[data['dayofweek'] >= 5]
         
@@ -91,7 +115,13 @@ class BloodDonationPredictor:
     
     def calculate_features(self, target_date):
         """Calculate features for target date from historical data"""
-        hist_data = self.historical_data[self.historical_data['date'] < target_date]
+        # Convert target_date to string for safe comparison
+        if hasattr(target_date, 'strftime'):
+            target_str = target_date.strftime('%Y-%m-%d')
+        else:
+            target_str = str(target_date)[:10]
+
+        hist_data = self.historical_data[self.historical_data['date'].dt.strftime('%Y-%m-%d') < target_str]
         
         if len(hist_data) < 14:
             raise ValueError(f"Need at least 14 days before {target_date}")
@@ -105,8 +135,11 @@ class BloodDonationPredictor:
         
         features = {}
         
+        # Ensure target_date is a datetime object for weekday calculation
+        target_dt = safe_date_operation(target_date)
+        
         # Time-based features
-        features['is_weekend'] = 1 if target_date.weekday() >= 5 else 0
+        features['is_weekend'] = 1 if target_dt.weekday() >= 5 else 0
         
         # Lag features with stabilization
         stabilization_factor = 0.2
@@ -134,13 +167,16 @@ class BloodDonationPredictor:
         
         # Temperature-based weekday_hot (corrected threshold)
         recent_temp = recent_data['max_temperature'].iloc[-1] if len(recent_data) > 0 else 25.0
-        is_weekday = target_date.weekday() < 5
+        is_weekday = target_dt.weekday() < 5
         features['weekday_hot'] = 1 if (is_weekday and recent_temp > 33) else 0
         
         return features
     
     def predict_single_day(self, target_date):
         """Predict blood donations for a single day"""
+        # Ensure target_date is a datetime object
+        target_date = safe_date_operation(target_date)
+        
         # Calculate features
         features = self.calculate_features(target_date)
         
@@ -234,9 +270,10 @@ class BloodDonationPredictor:
         new_temp = recent_temp + np.random.normal(0, 1.0)
         new_temp = np.clip(new_temp, 15, 35)
         
-        # Create new row
+        # Create new row with safe date conversion
+        target_date_pd = pd.to_datetime(target_date)
         new_row = pd.DataFrame({
-            'date': [target_date],
+            'date': [target_date_pd],
             'daily': [predicted_daily],
             'blood_o': [new_blood_o],
             'donations_new': [new_donations_new],
@@ -254,8 +291,15 @@ class BloodDonationPredictor:
     
     def predict_multiple_days(self, start_date, num_days=7):
         """Predict multiple consecutive days"""
+        # Convert start_date to Python datetime object
         if isinstance(start_date, str):
             start_date = datetime.strptime(start_date, '%Y-%m-%d')
+        else:
+            # Use safe conversion for any other type
+            start_date = safe_date_operation(start_date)
+
+        # Ensure historical data dates are pandas datetime
+        self.historical_data['date'] = pd.to_datetime(self.historical_data['date'])
         
         predictions = []
         
@@ -264,7 +308,8 @@ class BloodDonationPredictor:
             delattr(self, 'last_prediction')
         
         for day in range(num_days):
-            target_date = start_date + timedelta(days=day)
+            # Use safe date addition
+            target_date = safe_date_operation(start_date, 'add', day)
             pred_result = self.predict_single_day(target_date)
             predictions.append(pred_result)
         
