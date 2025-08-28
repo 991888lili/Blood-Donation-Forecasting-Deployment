@@ -225,7 +225,12 @@ if uploaded_file is not None:
                                 'Date': p['date'].strftime('%Y-%m-%d'),
                                 'Day': p['date'].strftime('%A'),
                                 'Predicted Donations': int(p['prediction']),
-                                'Day Type': '🏖️ Weekend' if p['date'].weekday() >= 5 else '💼 Weekday'
+                                'Day Type': '🏖️ Weekend' if p['date'].weekday() >= 5 else '💼 Weekday',
+                                'Priority Level': (
+                                    "🔴 Critical" if p['prediction'] < 450
+                                    else "🟡 Moderate" if p['prediction'] < 550
+                                    else "🟢 Good"
+                                )
                             } for p in predictions
                         ])
                         
@@ -406,8 +411,8 @@ if uploaded_file is not None:
                             # High priority recommendations
                             st.markdown("**🔴 High Priority:**")
                             st.markdown(f"• **{min_day.strftime('%A, %B %d')}**: Lowest predicted donations ({pred_values[min_day_idx]:.0f})")
-                            st.markdown("  - Increase marketing efforts")
-                            st.markdown("  - Launch social media campaigns")
+                            st.markdown("  - Strengthen promotional activities")
+                            st.markdown("  - Reduce staffing arrangements")
                             st.markdown("  - Contact regular donors")
                             
                             # Medium priority
@@ -426,7 +431,7 @@ if uploaded_file is not None:
                             st.markdown(f"• **{max_day.strftime('%A, %B %d')}**: Highest predicted donations ({pred_values[max_day_idx]:.0f})")
                             st.markdown("  - Ensure adequate blood bags")
                             st.markdown("  - Schedule maximum staff")
-                            st.markdown("  - Prepare celebration events")
+                            st.markdown("  - Schedule inventory for fewer dates")
                             
                             # Resource allocation
                             total_predicted = sum(pred_values)
@@ -436,37 +441,6 @@ if uploaded_file is not None:
                             st.markdown("  - Blood bag inventory: +20% buffer")
                             st.markdown("  - Staff scheduling: Peak on weekends")
 
-                        # Detailed recommendations
-                        st.markdown("#### 📋 Detailed Action Plan")
-
-                        recommendations = []
-
-                        # Analyze each day
-                        for i, pred in enumerate(predictions):
-                            day_name = pred['date'].strftime('%A')
-                            date_str = pred['date'].strftime('%B %d')
-                            donation_count = pred['prediction']
-                            
-                            if donation_count < 450:
-                                urgency = "🔴 Critical"
-                                actions = ["Launch emergency campaigns", "Contact all regular donors", "Increase incentives"]
-                            elif donation_count < 550:
-                                urgency = "🟡 Moderate"
-                                actions = ["Increase outreach", "Social media promotion", "Contact donor database"]
-                            else:
-                                urgency = "🟢 Good"
-                                actions = ["Maintain regular operations", "Prepare for high volume", "Ensure adequate supplies"]
-                            
-                            recommendations.append({
-                                'Date': f"{day_name}, {date_str}",
-                                'Expected Donations': f"{donation_count:.0f}",
-                                'Priority Level': urgency,
-                                'Recommended Actions': " • ".join(actions)
-                            })
-
-                        # Display recommendations table
-                        recommendations_df = pd.DataFrame(recommendations)
-                        st.dataframe(recommendations_df, use_container_width=True, hide_index=True)
 
                         # Summary insights
                         st.markdown("#### 🔍 Key Insights")
