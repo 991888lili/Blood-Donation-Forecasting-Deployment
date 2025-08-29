@@ -126,7 +126,7 @@ with col2:
     
     num_days = st.selectbox(
         "Number of Days to Predict",
-        options=[1, 3, 5, 7, 10, 14],
+        options=[1, 3, 5, 7],
         index=3,  # Default to 7 days
         help="How many consecutive days to predict"
     )
