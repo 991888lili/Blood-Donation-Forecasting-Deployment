@@ -71,7 +71,7 @@ class BloodDonationPredictor:
         }
         self.mean_pull_strength = 0.35
         self.daily_variation_factor = 0.4
-        self.random_factor = 0.6
+        self.random_factor = 0.1
         self.trend_continuation_factor = 0.05
     
     def prepare_historical_data(self, data):
@@ -291,8 +291,6 @@ class BloodDonationPredictor:
     
     def predict_multiple_days(self, start_date, num_days=7):
         """Predict multiple consecutive days"""
-        seed_value = hash(f"{start_date}_{num_days}") % (2**31)
-        np.random.seed(seed_value)
         # Convert start_date to Python datetime object
         if isinstance(start_date, str):
             start_date = datetime.strptime(start_date, '%Y-%m-%d')
