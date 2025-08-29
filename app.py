@@ -343,6 +343,11 @@ if uploaded_file is not None:
                                 y='daily',
                                 color='day_type',
                                 title='Daily Prediction Pattern',
+                                labels={
+                                    'day_name': 'Day',
+                                    'daily': 'Daily',
+                                    'day_type': 'Day Type'
+                                },
                                 category_orders={'day_name': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']}
                             )
                             st.plotly_chart(fig_pattern, use_container_width=True)
