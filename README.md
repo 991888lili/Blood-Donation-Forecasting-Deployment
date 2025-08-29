@@ -88,9 +88,8 @@ blood-donation-forecasting/
 ## 🔧 Usage Guide
 
 ### Step 1: Data Upload
-1. Download the sample data template from the app
-2. Prepare your 14-day historical data in the same format
-3. Upload your CSV file through the interface
+1. Prepare your 14-day historical data in the same format
+2. Upload your CSV file through the interface
 
 ### Step 2: Configure Predictions
 - **Start Date**: Choose the first day to predict
@@ -105,7 +104,6 @@ blood-donation-forecasting/
 - **Daily Predictions**: Tabular view with dates and forecast values
 - **Trend Visualization**: Historical data + future predictions
 - **Weekend Analysis**: Weekday vs weekend donation patterns
-- **Confidence Metrics**: Prediction reliability indicators
 
 ## 📈 Model Details
 
