@@ -333,17 +333,17 @@ if uploaded_file is not None:
                         with col2:
                             # Daily pattern
                             pred_data_with_type = pred_data.copy()
-                            pred_data_with_type['day_type'] = pred_data_with_type['date'].apply(
+                            pred_data_with_type['Day Type'] = pred_data_with_type['date'].apply(
                                 lambda x: '🏖️ Weekend' if x.weekday() >= 5 else '💼 Weekday'
                             )
                             
                             fig_pattern = px.bar(
                                 pred_data_with_type,
-                                x='day_name',
-                                y='daily',
-                                color='day_type',
+                                x='Day',
+                                y='Daily',
+                                color='Day Type',
                                 title='Daily Prediction Pattern',
-                                category_orders={'day_name': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']}
+                                category_orders={'Day': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']}
                             )
                             st.plotly_chart(fig_pattern, use_container_width=True)
                         
