@@ -92,7 +92,7 @@ col1, col2 = st.columns([1, 1])
 
 
 with col1:
-    st.header("🎉 Welcome to use")
+    st.header("🎉 Welcome")
     
     st.markdown("""
     <div style="background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); 
@@ -340,28 +340,8 @@ if uploaded_file is not None:
                                 category_orders={'day_name': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']}
                             )
                             st.plotly_chart(fig_pattern, use_container_width=True)
-                        
-                        # Show components if requested
-                        if show_components:
-                            st.subheader("🔧 Prediction Components")
-                            
-                            components_data = []
-                            for p in predictions:
-                                comp = p['components']
-                                components_data.append({
-                                    'Date': p['date'].strftime('%Y-%m-%d'),
-                                    'Raw Ensemble': f"{p['raw_ensemble']:.0f}",
-                                    'Mean Pulled': f"{comp['mean_pulled']:.0f}",
-                                    'Day-of-Week': f"{comp['dow_effect']:+.0f}",
-                                    'Random': f"{comp['daily_random']:+.0f}",
-                                    'Trend': f"{comp['trend_continuation']:+.0f}",
-                                    'Final': f"{p['prediction']:.0f}"
-                                })
-                            
-                            components_df = pd.DataFrame(components_data)
-                            st.dataframe(components_df, use_container_width=True, hide_index=True)
-                        
-                        
+                
+                               
                         # Blood donation activity recommendations
                         st.markdown("---")
                         st.subheader("💡 Blood Donation Activity Recommendations")
@@ -509,4 +489,5 @@ st.markdown("""
 <div style="text-align: center; color: #666; padding: 2rem;">
     🩸 Blood Donation Prediction System | Powered by Ensemble ML Models (XGBoost + LSTM + Meta-learner)
 </div>
+
 """, unsafe_allow_html=True)
