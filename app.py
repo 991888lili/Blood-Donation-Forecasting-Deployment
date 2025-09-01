@@ -131,25 +131,14 @@ with col2:
         help="How many consecutive days to predict"
     )
     
-    st.subheader("🔧 Advanced Settings")
-    with st.expander("Model Parameters (Optional)"):
-        show_components = st.checkbox("Show Prediction Components", value=False)
-        show_confidence = st.checkbox("Show Confidence Analysis", value=True)
+    st.subheader("📊 System Status")
+    status_col1, status_col2 = st.columns(2)
+    with status_col1:
+        st.success("🟢 Models Loaded")
+    with status_col2:
+        st.success("🟢 System Ready")
+ 
     
-# System Status 
-st.subheader("📊 System Status")
-status_col1, status_col2, status_col3, status_col4 = st.columns([1,1,1,1])
-with status_col1:
-    st.success("🟢 Models Loaded")
-
-with status_col2:
-    st.success("🟢 System Ready")
-
-with status_col3:
-    st.info("🔄 Awaiting Data")
-
-with status_col4:
-    st.info("⏳ Ready to Predict")
 
 # Main prediction section
 if uploaded_file is not None:
@@ -372,26 +361,6 @@ if uploaded_file is not None:
                             components_df = pd.DataFrame(components_data)
                             st.dataframe(components_df, use_container_width=True, hide_index=True)
                         
-                        # Confidence analysis
-                        if show_confidence:
-                            st.subheader("📊 Confidence Analysis")
-                            
-                            col1, col2 = st.columns(2)
-                            
-                            with col1:
-                                st.metric("📏 Coefficient of Variation", f"{summary['coefficient_variation']:.1f}%")
-                                st.metric("📊 Standard Deviation", f"{summary['std_prediction']:.0f}")
-                            
-                            with col2:
-                                trend_change = summary.get('trend_change', 0)
-                                st.metric("📈 Trend (First to Last)", f"{trend_change:+.0f}")
-                                
-                                if abs(trend_change) < 50:
-                                    st.success("✅ Stable prediction trend")
-                                elif abs(trend_change) < 150:
-                                    st.info("📊 Moderate trend change")
-                                else:
-                                    st.info("📈 Dynamic trend pattern")
                         
                         # Blood donation activity recommendations
                         st.markdown("---")
